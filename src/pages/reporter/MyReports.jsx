@@ -4,6 +4,7 @@ import { api } from "../../lib/api";
 import PortalModal from "../../components/PortalModal";
 import SearchableSelect from "../../components/SearchableSelect.jsx";
 import { showToast } from "../../services/notificationService";
+import { compressImageFile } from "../../lib/imageCompression";
 
 const interFamily =
   '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif';
@@ -442,8 +443,22 @@ export default function MyReports() {
     if (!editReportId || !files.length) return;
     const imageFiles = files.filter((file) => file.type?.startsWith("image/"));
     if (!imageFiles.length) return;
+
+    // Deployed servers may have stricter upload limits; compress before upload.
+    const MAX_BYTES = 1800000; // ~1.8MB safety buffer
+    const compressedFiles = [];
+    try {
+      for (const f of imageFiles) {
+        compressedFiles.push(await compressImageFile(f, { maxSizeBytes: MAX_BYTES }));
+      }
+    } catch {
+      // If compression fails, fall back to original.
+      compressedFiles.push(...imageFiles);
+      showToast.error("Could not compress attachments; trying original files.");
+    }
+
     const form = new FormData();
-    imageFiles.forEach((f) => form.append("attachments[]", f));
+    compressedFiles.forEach((f) => form.append("attachments[]", f));
     setEditSaving(true);
     try {
       // Let Axios/browser set the correct multipart boundary.

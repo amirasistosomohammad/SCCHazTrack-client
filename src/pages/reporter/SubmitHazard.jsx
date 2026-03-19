@@ -6,6 +6,7 @@ import SearchableSelect from "../../components/SearchableSelect.jsx";
 import PortalModal from "../../components/PortalModal";
 import { showToast } from "../../services/notificationService";
 import { motion, AnimatePresence } from "framer-motion";
+import { compressImageFile } from "../../lib/imageCompression";
 
 const interFamily =
   '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif';
@@ -735,9 +736,28 @@ export default function SubmitHazard() {
                     e.target.value = "";
                     return;
                   }
-
-                  setAttachments((prev) => [...prev, ...imageFiles]);
-                  e.target.value = "";
+                  // Deployed servers often have stricter upload limits than localhost.
+                  // Compress images client-side to avoid "failed to upload" validation errors.
+                  (async () => {
+                    try {
+                      const MAX_BYTES = 1800000; // ~1.8MB safety buffer
+                      const compressed = [];
+                      for (const f of imageFiles) {
+                        compressed.push(
+                          await compressImageFile(f, { maxSizeBytes: MAX_BYTES })
+                        );
+                      }
+                      setAttachments((prev) => [...prev, ...compressed]);
+                    } catch {
+                      // If compression fails, fall back to original files.
+                      setAttachments((prev) => [...prev, ...imageFiles]);
+                      showToast.error(
+                        "Could not compress attachments; trying original files."
+                      );
+                    } finally {
+                      e.target.value = "";
+                    }
+                  })();
                 }}
                 disabled={saving}
               />
