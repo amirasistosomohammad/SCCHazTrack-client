@@ -6,12 +6,9 @@ export const AUTH_TOKEN_STORAGE_KEY = "haztrack_auth_token";
 
 export const api = axios.create({
   baseURL: API_BASE,
-  withCredentials: true,
-  // Important for Sanctum + SPA on a different origin (e.g. 5173 -> 8000):
-  // ensure Axios sends X-XSRF-TOKEN header for credentialed requests.
-  withXSRFToken: true,
-  xsrfCookieName: "XSRF-TOKEN",
-  xsrfHeaderName: "X-XSRF-TOKEN",
+  // Use Bearer tokens for authentication (see `setAuthToken`).
+  // Do not rely on Sanctum cookie-based CSRF flows.
+  withCredentials: false,
   headers: {
     Accept: "application/json",
   },
@@ -36,7 +33,8 @@ try {
 }
 
 export async function ensureCsrfCookie() {
-  if (!ORIGIN) throw new Error("Missing VITE_LARAVEL_API");
-  await axios.get(`${ORIGIN}/sanctum/csrf-cookie`, { withCredentials: true });
+  // Intentionally disabled: the backend API uses Bearer tokens (personal access tokens)
+  // and does not require Sanctum's CSRF cookie endpoint.
+  return Promise.resolve();
 }
 
