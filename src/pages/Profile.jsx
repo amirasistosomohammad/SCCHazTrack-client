@@ -1,54 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash, FaLock, FaSave, FaSpinner, FaUser } from "react-icons/fa";
+import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "../contexts/AuthContext";
 import { api } from "../lib/api";
 import { showToast } from "../services/notificationService";
-import SearchableSelect from "../components/SearchableSelect";
+import SearchableComboBox from "../components/SearchableComboBox";
 import "./Profile.css";
-
-const SECTION_UNIT_OPTIONS = [
-  "OCD- OFFICE OF THE CENTER DIRECTOR",
-  "CDMS- CAREER DEVELOPMENT AND MANAGEMENT SECTION",
-  "PAS- PARTNERSHIP AND ACCREDITATION SECTION",
-  "ISS - INFORMATION AND SERVICES SECTION",
-  "PMEU- PLANNING AND MONITORING UNIT",
-  "BUDGET",
-  "HR- HUMAN RESOURCE",
-  "ACCTG- ACCOUNTING",
-  "GSS- GENERAL SERVICES SECTION",
-  "SUPPLY",
-  "CFIDP",
-  "RCEF",
-];
-
-const DESIGNATION_POSITION_OPTIONS = [
-  "AO IV",
-  "SG I",
-  "TS III",
-  "PEO I",
-  "ACCTNT I",
-  "SG II",
-  "DMO I",
-  "TS II",
-  "MPS II",
-  "AO II",
-  "AG II",
-  "IO II",
-  "AO I",
-  "IO-II",
-  "TS-I",
-  "TCS II",
-  "TCS I",
-  "AG I",
-  "DMO II",
-  "AA III",
-  "NC I",
-  "DM II",
-  "IO III",
-  "PO II",
-  "TECHNICAL STAFF",
-  "ADMIN SUPPORT STAFF",
-];
 
 export default function Profile() {
   const { user, refreshMe } = useAuth();
@@ -57,10 +14,13 @@ export default function Profile() {
   const [profileLoading, setProfileLoading] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
 
+  const [campusOptions, setCampusOptions] = useState([]);
+  const [campusLoading, setCampusLoading] = useState(false);
+
   const [profileForm, setProfileForm] = useState({
     name: "",
-    section_unit: "",
-    designation_position: "",
+    edp_number: "",
+    campus: "",
   });
 
   const [passwordForm, setPasswordForm] = useState({
@@ -83,15 +43,56 @@ export default function Profile() {
   });
   const [showPasswordCriteria, setShowPasswordCriteria] = useState(false);
 
-  useEffect(() => {
-    if (user) {
-      setProfileForm({
-        name: user.name || "",
-        section_unit: user.section_unit || "",
-        designation_position: user.designation_position || "",
-      });
+  const getUserField = (u, ...keys) => {
+    for (const k of keys) {
+      const v = u?.[k];
+      if (v === null || v === undefined) continue;
+      const s = String(v).trim();
+      if (s) return s;
     }
+    return "";
+  };
+
+  useEffect(() => {
+    if (!user) return;
+
+    // Initialize defaults from the logged-in user (same pattern as My Reports campus).
+    // Support multiple possible backend shapes for resilience.
+    const name = getUserField(user, "name");
+    const edpNumber = getUserField(user, "edp_number", "edpNumber");
+    const campus = getUserField(user, "campus");
+
+    setProfileForm((prev) => {
+      // Don't clobber in-progress edits if the user object refreshes.
+      const next = { ...prev };
+      if (!String(prev.name || "").trim()) next.name = name;
+      if (!String(prev.edp_number || "").trim()) next.edp_number = edpNumber;
+      if (!String(prev.campus || "").trim()) next.campus = campus;
+      return next;
+    });
   }, [user]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setCampusLoading(true);
+      try {
+        const res = await api.get("/locations");
+        if (cancelled) return;
+        setCampusOptions(
+          Array.isArray(res.data?.data)
+            ? res.data.data.map((l) => String(l?.name ?? "")).filter(Boolean)
+            : []
+        );
+      } finally {
+        if (!cancelled) setCampusLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!user) {
     return null;
@@ -141,6 +142,12 @@ export default function Profile() {
     if (!profileForm.name?.trim()) {
       nextErrors.name = "Name is required.";
     }
+    if (!profileForm.edp_number?.trim()) {
+      nextErrors.edp_number = "EDP number is required.";
+    }
+    if (!profileForm.campus?.trim()) {
+      nextErrors.campus = "Campus is required.";
+    }
     setProfileErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
@@ -148,8 +155,8 @@ export default function Profile() {
     try {
       await api.put("/user/profile", {
         name: profileForm.name.trim(),
-        section_unit: profileForm.section_unit?.trim() || null,
-        designation_position: profileForm.designation_position?.trim() || null,
+        edp_number: profileForm.edp_number.trim(),
+        campus: profileForm.campus.trim(),
       });
       await refreshMe();
       showToast.success("Profile updated successfully.");
@@ -271,7 +278,7 @@ export default function Profile() {
           <section className="my-profile-card my-profile-card-right">
             <div className="my-profile-content-body">
               {activeTab === "account" && (
-                <div className="my-profile-tab-panel">
+                <div className="my-profile-tab-panel tab-transition-enter">
                   <h2 className="my-profile-card-title">
                     <FaUser className="my-profile-card-title-icon" aria-hidden="true" />
                     <span>Account information</span>
@@ -301,9 +308,19 @@ export default function Profile() {
                           maxLength={255}
                           placeholder="Enter your full name"
                         />
-                        {profileErrors.name && (
-                          <div className="invalid-feedback">{profileErrors.name}</div>
-                        )}
+                        <AnimatePresence>
+                          {profileErrors.name && (
+                            <motion.div
+                              className="invalid-feedback d-block"
+                              initial={{ opacity: 0, y: -4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -4 }}
+                              transition={{ duration: 0.28, ease: "easeOut" }}
+                            >
+                              {profileErrors.name}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
 
                       <div className="my-profile-form-group my-profile-form-group-readonly">
@@ -320,73 +337,82 @@ export default function Profile() {
                         />
                       </div>
 
-                      <div className="my-profile-form-group my-profile-searchable-group">
-                        <label htmlFor="section_unit" className="form-label my-profile-label">
-                          Section / Unit
+                      <div className="my-profile-form-group">
+                        <label htmlFor="edp_number" className="form-label my-profile-label">
+                          EDP number <span className="text-danger">*</span>
                         </label>
-                        <SearchableSelect
-                          id="section_unit"
-                          options={SECTION_UNIT_OPTIONS}
-                          value={profileForm.section_unit || ""}
-                          onChange={(val) =>
-                            setProfileForm((prev) => ({ ...prev, section_unit: val || "" }))
-                          }
+                        <input
+                          id="edp_number"
+                          name="edp_number"
+                          type="text"
+                          className={`form-control my-profile-input ${
+                            profileErrors.edp_number ? "is-invalid" : ""
+                          }`}
+                          value={profileForm.edp_number}
+                          onChange={handleProfileChange}
                           disabled={profileLoading}
-                          invalid={!!profileErrors.section_unit}
-                          placeholder="Search or select Section / Unit..."
-                          inputStyle={{ paddingLeft: 12 }}
-                          aria-label="Section or unit"
-                          theme={{
-                            primary: "var(--primary-color, #0d7a3a)",
-                            borderColor: profileErrors.section_unit
-                              ? "#b91c1c"
-                              : "var(--input-border, #d5dbe6)",
-                            textPrimary: "var(--text-primary, #10172b)",
-                          }}
+                          maxLength={64}
+                          placeholder="Enter your EDP number"
                         />
-                        {profileErrors.section_unit && (
-                          <div className="text-danger small mt-1">
-                            {profileErrors.section_unit}
-                          </div>
-                        )}
+                        <AnimatePresence>
+                          {profileErrors.edp_number && (
+                            <motion.div
+                              className="invalid-feedback d-block"
+                              initial={{ opacity: 0, y: -4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -4 }}
+                              transition={{ duration: 0.28, ease: "easeOut" }}
+                            >
+                              {profileErrors.edp_number}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
 
                       <div className="my-profile-form-group my-profile-searchable-group">
-                        <label htmlFor="designation_position" className="form-label my-profile-label">
-                          Designation / Position
+                        <label htmlFor="campus" className="form-label my-profile-label">
+                          Campus <span className="text-danger">*</span>
                         </label>
-                        <SearchableSelect
-                          id="designation_position"
-                          options={DESIGNATION_POSITION_OPTIONS}
-                          value={profileForm.designation_position || ""}
-                          onChange={(val) =>
-                            setProfileForm((prev) => ({ ...prev, designation_position: val || "" }))
-                          }
-                          disabled={profileLoading}
-                          invalid={!!profileErrors.designation_position}
-                          placeholder="Search or select Designation / Position..."
-                          inputStyle={{ paddingLeft: 12 }}
-                          aria-label="Designation or position"
+                        <SearchableComboBox
+                          id="campus"
+                          name="campus"
+                          value={profileForm.campus || ""}
+                          onChange={(val) => setProfileForm((prev) => ({ ...prev, campus: val }))}
+                          options={campusOptions}
+                          placeholder="Search campus..."
+                          disabled={profileLoading || campusLoading}
+                          invalid={!!profileErrors.campus}
+                          className={`form-control my-profile-input ${
+                            profileErrors.campus ? "is-invalid" : ""
+                          }`}
                           theme={{
                             primary: "var(--primary-color, #0d7a3a)",
-                            borderColor: profileErrors.designation_position
+                            borderColor: profileErrors.campus
                               ? "#b91c1c"
                               : "var(--input-border, #d5dbe6)",
                             textPrimary: "var(--text-primary, #10172b)",
                           }}
                         />
-                        {profileErrors.designation_position && (
-                          <div className="text-danger small mt-1">
-                            {profileErrors.designation_position}
-                          </div>
-                        )}
+                        <AnimatePresence>
+                          {profileErrors.campus && (
+                            <motion.p
+                              className="text-danger small mt-1 mb-0"
+                              initial={{ opacity: 0, y: -4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -4 }}
+                              transition={{ duration: 0.28, ease: "easeOut" }}
+                            >
+                              {profileErrors.campus}
+                            </motion.p>
+                          )}
+                        </AnimatePresence>
                       </div>
                     </div>
 
                     <div className="my-profile-form-footer my-profile-form-footer-left">
                       <button
                         type="submit"
-                        className="btn btn-primary my-profile-primary-btn"
+                        className="btn btn-login my-profile-primary-btn"
                         disabled={profileLoading}
                         aria-busy={profileLoading}
                       >
@@ -408,7 +434,7 @@ export default function Profile() {
               )}
 
               {activeTab === "security" && (
-                <div className="my-profile-tab-panel">
+                <div className="my-profile-tab-panel tab-transition-enter">
                   <h2 className="my-profile-card-title">
                     <FaLock className="my-profile-card-title-icon" aria-hidden="true" />
                     <span>Security</span>
@@ -433,7 +459,7 @@ export default function Profile() {
                             id="current_password"
                             name="current_password"
                             type={showCurrentPassword ? "text" : "password"}
-                            className={`form-control ${
+                            className={`form-control login-input ${
                               passwordErrors.current_password ? "is-invalid" : ""
                             }`}
                             value={passwordForm.current_password}
@@ -454,11 +480,19 @@ export default function Profile() {
                             {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
                           </button>
                         </div>
-                        {passwordErrors.current_password && (
-                          <div className="invalid-feedback d-block small mb-2">
-                            {passwordErrors.current_password}
-                          </div>
-                        )}
+                        <AnimatePresence>
+                          {passwordErrors.current_password && (
+                            <motion.p
+                              className="invalid-feedback d-block small mb-2"
+                              initial={{ opacity: 0, y: -4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -4 }}
+                              transition={{ duration: 0.28, ease: "easeOut" }}
+                            >
+                              {passwordErrors.current_password}
+                            </motion.p>
+                          )}
+                        </AnimatePresence>
                       </div>
 
                       <div className="my-profile-form-group">
@@ -473,7 +507,7 @@ export default function Profile() {
                             id="new_password"
                             name="new_password"
                             type={showNewPassword ? "text" : "password"}
-                            className={`form-control border-start-0 ps-2 fw-semibold ${
+                            className={`form-control login-input border-start-0 ps-2 fw-semibold ${
                               passwordForm.new_password &&
                               passwordValidation.minLength &&
                               passwordValidation.hasLetter &&
@@ -521,11 +555,19 @@ export default function Profile() {
                           </div>
                         </div>
 
-                        {passwordErrors.new_password && (
-                          <div className="invalid-feedback d-block small mb-2">
-                            {passwordErrors.new_password}
-                          </div>
-                        )}
+                        <AnimatePresence>
+                          {passwordErrors.new_password && (
+                            <motion.p
+                              className="invalid-feedback d-block small mb-2"
+                              initial={{ opacity: 0, y: -4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -4 }}
+                              transition={{ duration: 0.28, ease: "easeOut" }}
+                            >
+                              {passwordErrors.new_password}
+                            </motion.p>
+                          )}
+                        </AnimatePresence>
                       </div>
 
                       <div className="my-profile-form-group">
@@ -543,7 +585,7 @@ export default function Profile() {
                             id="new_password_confirmation"
                             name="new_password_confirmation"
                             type={showConfirmPassword ? "text" : "password"}
-                            className={`form-control ${
+                            className={`form-control login-input ${
                               passwordErrors.new_password_confirmation ? "is-invalid" : ""
                             }`}
                             value={passwordForm.new_password_confirmation}
@@ -565,18 +607,26 @@ export default function Profile() {
                             {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                           </button>
                         </div>
-                        {passwordErrors.new_password_confirmation && (
-                          <div className="invalid-feedback d-block small mb-3">
-                            {passwordErrors.new_password_confirmation}
-                          </div>
-                        )}
+                        <AnimatePresence>
+                          {passwordErrors.new_password_confirmation && (
+                            <motion.p
+                              className="invalid-feedback d-block small mb-3"
+                              initial={{ opacity: 0, y: -4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -4 }}
+                              transition={{ duration: 0.28, ease: "easeOut" }}
+                            >
+                              {passwordErrors.new_password_confirmation}
+                            </motion.p>
+                          )}
+                        </AnimatePresence>
                       </div>
                     </div>
 
                     <div className="my-profile-form-footer my-profile-form-footer-left">
                       <button
                         type="submit"
-                        className="btn btn-primary my-profile-primary-btn"
+                        className="btn btn-login my-profile-primary-btn"
                         disabled={passwordLoading}
                         aria-busy={passwordLoading}
                       >

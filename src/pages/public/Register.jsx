@@ -19,6 +19,7 @@ import LoginBackground from "../../assets/background-image.png";
 import Logo from "../../assets/images/logo.png";
 import SearchableComboBox from "../../components/SearchableComboBox";
 import OtpInput from "../../components/OtpInput";
+import { api } from "../../lib/api";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -66,22 +67,31 @@ const Register = () => {
     confirmPassword: "",
   });
 
-  const campusOptions = useMemo(() => {
-    const raw = [
-      "Buenavista Campus",
-      "Elementary Campus",
-      "Junior High School Campus",
-      "San Francisco Campus",
-      "San Francisco Campus",
-    ];
-    const seen = new Set();
-    return raw.filter((v) => {
-      const key = String(v).trim().toLowerCase();
-      if (!key) return false;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
+  const [campusOptions, setCampusOptions] = useState([]);
+  const [campusLoading, setCampusLoading] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setCampusLoading(true);
+      try {
+        const res = await api.get("/locations");
+        if (cancelled) return;
+        const names = Array.isArray(res.data?.data)
+          ? res.data.data.map((l) => String(l?.name ?? "")).filter(Boolean)
+          : [];
+        setCampusOptions(names);
+      } catch {
+        // Keep UI functional even if lookup fails.
+        if (!cancelled) setCampusOptions([]);
+      } finally {
+        if (!cancelled) setCampusLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -593,7 +603,7 @@ const Register = () => {
                         onChange={(val) => setFormField("campus", val)}
                         options={campusOptions}
                         placeholder="Search campus..."
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || campusLoading}
                         invalid={!!fieldErrors.campus}
                         className="form-control ps-5 fw-semibold login-input"
                         style={{

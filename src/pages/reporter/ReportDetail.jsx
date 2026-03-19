@@ -27,7 +27,7 @@ export default function ReportDetail() {
         <h2>Report #{report.id}</h2>
         <div style={{ display: "flex", gap: 12 }}>
           <Link to="/reporter">Home</Link>
-          <Link to="/reporter/my-reports">My Reports</Link>
+          <Link to="/reporter/my-reports">My Hazard Reports</Link>
         </div>
       </div>
 

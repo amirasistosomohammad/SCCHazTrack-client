@@ -29,7 +29,7 @@ export default function ManagerHome() {
       {metrics ? (
         <ul>
           <li>
-            <b>Open:</b> {metrics.open_count}
+            <b>Pending:</b> {metrics.pending_count}
           </li>
           <li>
             <b>Closed:</b> {metrics.closed_count}

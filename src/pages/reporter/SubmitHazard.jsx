@@ -42,22 +42,18 @@ export default function SubmitHazard() {
   const pendingNavigationRef = useRef(null); // { type: 'path'|'back', value: string }
 
   const campusOptions = useMemo(() => {
-    const raw = [
-      "Buenavista Campus",
-      "Elementary Campus",
-      "Junior High School Campus",
-      "San Francisco Campus",
-      "San Francisco Campus",
-    ];
+    if (!locations?.length) return [];
     const seen = new Set();
-    return raw.filter((v) => {
-      const key = String(v).trim().toLowerCase();
-      if (!key) return false;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-  }, []);
+    return locations
+      .map((l) => String(l.name || "").trim())
+      .filter((name) => {
+        const key = name.toLowerCase();
+        if (!key) return false;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+  }, [locations]);
 
   function removeAttachment(indexToRemove) {
     setAttachments((prev) => prev.filter((_, index) => index !== indexToRemove));
@@ -184,30 +180,8 @@ export default function SubmitHazard() {
     })();
   }, []);
 
-  useEffect(() => {
-    // Derive campus string from various possible user shapes.
-    // This MUST match what your backend returns from /auth/me.
-    const campusRaw =
-      user?.campus?.name ??
-      user?.campus_name ??
-      user?.campus ??
-      "";
-    const campus = String(campusRaw).trim();
-    if (!campus) return;
-
-    // Always keep the Location combobox text in sync with the user's campus.
-    setSelectedCampus(campus);
-
-    // Best-effort: if locations exist, map campus text to a concrete location_id.
-    if (!locations.length) return;
-    const norm = (s) => String(s).trim().toLowerCase();
-    const match =
-      locations.find((l) => norm(l.name) === norm(campus)) ||
-      locations.find((l) => norm(l.name).includes(norm(campus)));
-    if (match?.id) {
-      setLocationId(String(match.id));
-    }
-  }, [user, locations]);
+  // Intentionally do NOT prefill Location.
+  // Location must be chosen explicitly by the reporter.
 
   useEffect(() => {
     if (!loading) {
@@ -226,22 +200,9 @@ export default function SubmitHazard() {
     if (!resolvedLocationId && selectedCampus && locations.length) {
       const norm = (s) => String(s).trim().toLowerCase();
       const campusKey = norm(selectedCampus);
-      const match =
-        locations.find((l) => norm(l.name) === campusKey) ||
-        locations.find((l) => norm(l.name).includes(campusKey));
+      const match = locations.find((l) => norm(l.name) === campusKey);
       if (match?.id) {
         resolvedLocationId = String(match.id);
-        if (locationId !== resolvedLocationId) {
-          setLocationId(resolvedLocationId);
-        }
-      }
-      // As a last resort, fall back to the first available location so the
-      // backend always receives a concrete id and does not loop on validation.
-      else if (locations[0]?.id) {
-        resolvedLocationId = String(locations[0].id);
-        if (locationId !== resolvedLocationId) {
-          setLocationId(resolvedLocationId);
-        }
       }
     }
 
@@ -249,10 +210,8 @@ export default function SubmitHazard() {
     if (!categoryId) {
       nextErrors.category = "Please select a hazard category.";
     }
-    // Only show a client-side error if both the visible text AND resolved id
-    // are empty. If a default campus is shown, we let the fallback resolution
-    // above ensure an id is sent to the server.
-    if (!selectedCampus && !resolvedLocationId) {
+    // Require a real mapped location id – no silent fallback.
+    if (!resolvedLocationId) {
       nextErrors.location = "Please select the location where the hazard was observed.";
     }
     const desc = String(description || "").trim();
@@ -276,7 +235,12 @@ export default function SubmitHazard() {
       form.append("category_id", String(categoryId));
       form.append("location_id", String(resolvedLocationId || ""));
       form.append("severity", severity);
-      if (observedAt) form.append("observed_at", observedAt);
+      if (observedAt) {
+        // `datetime-local` is a timezone-less local timestamp.
+        // Convert to an ISO instant so the backend stores the correct moment and the UI renders accurately.
+        const iso = new Date(observedAt).toISOString();
+        form.append("observed_at", iso);
+      }
       form.append("description", description);
       attachments.forEach((f) => form.append("attachments[]", f));
 
@@ -284,10 +248,8 @@ export default function SubmitHazard() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      const id = res.data?.data?.id;
       initialSnapshotRef.current = null;
-      if (id) navigate(`/reporter/reports/${id}`);
-      else navigate("/reporter/my-reports");
+      navigate("/reporter/my-reports");
     } catch (err) {
       let message =
         err?.response?.data?.message ||
@@ -340,7 +302,7 @@ export default function SubmitHazard() {
                     color: "var(--text-primary)",
                   }}
                 >
-                  Submit hazard
+                  Submit Hazard Report
                 </h2>
                 <p
                   className="mb-0"
@@ -352,7 +314,7 @@ export default function SubmitHazard() {
                     fontWeight: 600,
                   }}
                 >
-                  Submit details of a hazard so it can be properly reviewed and addressed.
+                  Submit hazard report details for official review and appropriate action.
                 </p>
               </div>
             </div>
@@ -424,7 +386,7 @@ export default function SubmitHazard() {
                   color: "var(--text-primary)",
                 }}
               >
-                Submit hazard
+                Submit Hazard Report
               </h2>
               <p
                 className="mb-0"
@@ -436,7 +398,7 @@ export default function SubmitHazard() {
                   fontWeight: 600,
                 }}
               >
-                Submit details of a hazard so it can be properly reviewed and addressed.
+                Submit hazard report details for official review and appropriate action.
               </p>
             </div>
           </div>
@@ -576,10 +538,13 @@ export default function SubmitHazard() {
                     return;
                   }
                   const norm = (s) => String(s).trim().toLowerCase();
-                  const match =
-                    locations.find((l) => norm(l.name) === norm(campus)) ||
-                    locations.find((l) => norm(l.name).includes(norm(campus)));
-                  setLocationId(match?.id ? String(match.id) : "");
+                  const match = locations.find((l) => norm(l.name) === norm(campus));
+                  if (match?.id) {
+                    setSelectedCampus(String(match.name));
+                    setLocationId(String(match.id));
+                  } else {
+                    setLocationId("");
+                  }
                   if (fieldErrors.location) {
                     setFieldErrors((prev) => ({ ...prev, location: "" }));
                   }
@@ -1131,7 +1096,7 @@ export default function SubmitHazard() {
                 ) : (
                   <i className="fas fa-paper-plane" aria-hidden="true" />
                 )}
-                <span>{saving ? "Submitting…" : "Submit report"}</span>
+                <span>{saving ? "Submitting…" : "Submit Hazard Report"}</span>
               </button>
             </div>
           </form>

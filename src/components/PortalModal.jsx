@@ -23,7 +23,7 @@ export default function PortalModal({
   panelClassName = 'portal-modal-panel',
 }) {
   const [rendered, setRendered] = useState(Boolean(isOpen))
-  const [phase, setPhase] = useState(isOpen ? 'open' : 'closed') // closed | open | closing
+  const [phase, setPhase] = useState(isOpen ? 'entered' : 'closed') // closed | entered | closing
   const closingTimerRef = useRef(null)
 
   const mounted = rendered || isOpen
@@ -54,7 +54,7 @@ export default function PortalModal({
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setRendered(true)
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setPhase('open')
+      setPhase('entered')
       return
     }
 

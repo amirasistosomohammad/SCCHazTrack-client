@@ -16,6 +16,7 @@ import AdminReportDetail from "./pages/administrator/AdminReportDetail";
 import ManageUsers from "./pages/system_manager/ManageUsers";
 import ManageCategories from "./pages/system_manager/ManageCategories";
 import ManageLocations from "./pages/system_manager/ManageLocations";
+import PersonnelNotifications from "./pages/personnel/PersonnelNotifications";
 import Register from "./pages/public/Register";
 import ForgotPassword from "./pages/public/ForgotPassword";
 import ResetPassword from "./pages/public/ResetPassword";
@@ -115,6 +116,14 @@ export default function App() {
         <Route path="reporter/submit" element={<SubmitHazard />} />
         <Route path="reporter/my-reports" element={<MyReports />} />
         <Route path="reporter/reports/:id" element={<ReportDetail />} />
+        <Route
+          path="personnel/notifications"
+          element={
+            <RoleRoute allow={["reporter", "personnel"]}>
+              <PersonnelNotifications />
+            </RoleRoute>
+          }
+        />
       </Route>
 
       <Route path="/reporter" element={<Navigate to="/dashboard" replace />} />

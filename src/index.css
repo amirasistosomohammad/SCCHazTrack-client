@@ -129,6 +129,41 @@
   justify-content: center;
   padding: 1rem;
 }
+
+/* Ensure react-toastify toasts always render above PortalModal overlays. */
+.Toastify__toast-container {
+  z-index: 20001 !important;
+}
+
+/* ===== MyReports results table (responsive + fixed row height) ===== */
+.myreports-results-table {
+  table-layout: auto !important;
+  width: max-content !important;
+}
+.myreports-results-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.myreports-results-table {
+  min-width: 900px;
+}
+@media (max-width: 768px) {
+  .myreports-results-table {
+    min-width: 760px;
+  }
+}
+.myreports-results-table thead th {
+  white-space: nowrap;
+}
+.myreports-results-table tbody tr {
+  height: 64px;
+}
+.myreports-results-table tbody td {
+  vertical-align: middle;
+  /* Allow action buttons to be clickable even when they visually exceed
+     the fixed row height; long text truncation is handled by inline spans. */
+  overflow: visible;
+}
 .account-approvals-detail-backdrop {
   position: absolute;
   inset: 0;
@@ -149,9 +184,107 @@
   border: 1px solid var(--border-color);
 }
 
+/* Narrow "Sign out?" confirmation modal for a cleaner corporate feel. */
+.logout-confirm-modal {
+  max-width: 420px !important;
+}
+
 /* Slightly wider modal for My Reports view details */
 .account-approvals-detail-modal.myreports-view-modal {
-  max-width: min(880px, 98vw) !important;
+  width: 100% !important;
+  max-width: 448px !important;
+}
+
+/* Force Inter inside report details modal (Bootstrap utilities can override font-family). */
+.account-approvals-detail-modal.myreports-view-modal,
+.account-approvals-detail-modal.myreports-view-modal * {
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    system-ui,
+    sans-serif !important;
+}
+
+/* But do NOT break Font Awesome icons inside the modal. */
+.account-approvals-detail-modal.myreports-view-modal i.fa,
+.account-approvals-detail-modal.myreports-view-modal i.fas,
+.account-approvals-detail-modal.myreports-view-modal i.far,
+.account-approvals-detail-modal.myreports-view-modal i.fab,
+.account-approvals-detail-modal.myreports-view-modal i.fa-solid,
+.account-approvals-detail-modal.myreports-view-modal i.fa-regular,
+.account-approvals-detail-modal.myreports-view-modal i.fa-brands {
+  font-family: "Font Awesome 6 Free" !important;
+}
+.account-approvals-detail-modal.myreports-view-modal i.fa-brands {
+  font-family: "Font Awesome 6 Brands" !important;
+}
+
+/* Nuclear: enforce width on the PortalModal wrapper too */
+.account-approvals-detail-overlay .myreports-view-wrap {
+  width: 100%;
+  max-width: 448px;
+}
+.account-approvals-detail-overlay .myreports-view-wrap > .account-approvals-detail-modal.myreports-view-modal {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* ===== My Reports: attachment preview modal (responsive, consistent sizing) ===== */
+.account-approvals-detail-overlay .myreports-attachment-wrap {
+  width: 100%;
+  /* Match the "View Details" modal width on desktop */
+  max-width: 448px;
+}
+
+.account-approvals-detail-modal.myreports-attachment-modal {
+  width: 100% !important;
+  max-width: none !important; /* wrapper controls width */
+  max-height: min(88vh, 760px);
+}
+
+.account-approvals-detail-modal.myreports-attachment-modal .myreports-attachment-body {
+  padding: clamp(0.9rem, 2.2vw, 1.5rem);
+}
+
+.account-approvals-detail-modal.myreports-attachment-modal .myreports-attachment-media {
+  width: 100%;
+  height: 100%;
+  min-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: radial-gradient(circle at top left, #f3f4f6 0, #ffffff 42%, #f9fafb 100%);
+  overflow: hidden;
+}
+
+.account-approvals-detail-modal.myreports-attachment-modal .myreports-attachment-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+  display: block;
+}
+
+@media (max-width: 575.98px) {
+  .account-approvals-detail-overlay .myreports-attachment-wrap {
+    max-width: 100%;
+  }
+
+  .account-approvals-detail-modal.myreports-attachment-modal {
+    max-height: 92vh;
+    border-radius: 12px;
+  }
+}
+
+@media (min-width: 768px) {
+  .account-approvals-detail-modal.myreports-attachment-modal {
+    max-height: min(84vh, 780px);
+  }
 }
 .account-approvals-detail-header {
   position: relative;
@@ -480,9 +613,9 @@ label {
   width: 3.5rem;
   height: 3.5rem;
   margin-bottom: 1.25rem;
-  background: rgba(11, 85, 143, 0.08);
+  background: rgba(12, 138, 59, 0.08);
   border-radius: 50%;
-  color: var(--primary-blue, #0b558f);
+  color: var(--primary-color, #0C8A3B);
 }
 
 .in-development-icon {
@@ -493,7 +626,7 @@ label {
   margin: 0 0 0.75rem;
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--sidebar-text, #1e3a5f);
+  color: var(--text-primary, #10172b);
 }
 
 .in-development-desc {
@@ -1153,6 +1286,75 @@ button.auth-text-link:disabled,
   background: linear-gradient(135deg, var(--background-light) 0%, #e8f5e8 100%);
   color: var(--primary-color);
   transform: translateX(4px);
+}
+
+.sb-topnav .dropdown-item.topbar-email-item,
+.sb-topnav .dropdown-item.logout-item,
+.sb-topnav .dropdown-item.custom-dropdown-item.logout-item {
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  will-change: transform;
+}
+
+/* Prevent the global dropdown hover translation from visually "sliding"
+   the email/logout items outside the dropdown panel. */
+.sb-topnav .dropdown-item.topbar-email-item:hover,
+.sb-topnav .dropdown-item.logout-item:hover,
+.sb-topnav .dropdown-item.custom-dropdown-item.logout-item:hover {
+  transform: none !important;
+}
+
+@media (max-width: 767.98px) {
+  .sb-topnav {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .sb-topnav-brand-name {
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sb-topnav-logo-gap {
+    margin-right: 0.65rem;
+  }
+
+  .sb-topnav .navbar-nav {
+    align-items: center;
+  }
+
+  .sb-topnav .dropdown-menu {
+    /* Consistent dropdown width: match desktop size (not full-bleed on mobile). */
+    position: absolute !important;
+    top: 100% !important;
+    left: auto !important;
+    right: 0 !important;
+    min-width: 200px !important;
+    width: 200px !important;
+    max-width: calc(100vw - 24px) !important;
+    overflow-y: auto;
+    max-height: calc(100vh - 60px - 16px);
+    margin-top: 0.75rem !important;
+  }
+
+  .sb-topnav .dropdown-menu.show {
+    transform: translateY(0) scale(1) !important;
+  }
+
+  .sb-topnav .dropdown-header {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sb-topnav .dropdown-item {
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
 }
 
 /* ===== SIDEBAR (match ATIn-client) ===== */

@@ -22,7 +22,7 @@ const LogoutConfirmModal = ({ isOpen, onConfirm, onCancel, loading = false }) =>
       overlayClassName="account-approvals-detail-overlay"
       backdropClassName={`account-approvals-detail-backdrop${loading ? ' logout-backdrop-loading' : ''}`}
       wrapClassName=""
-      panelClassName="account-approvals-detail-modal"
+      panelClassName="account-approvals-detail-modal logout-confirm-modal"
       closeOnBackdrop={!loading}
       closeOnEsc={!loading}
     >

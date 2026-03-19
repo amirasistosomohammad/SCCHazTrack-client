@@ -318,15 +318,13 @@ export default function Login() {
             {/* Submit button */}
             <button
               type="submit"
-              className="w-100 fw-semibold d-flex align-items-center justify-content-center"
+              className="w-100 py-2 fw-semibold d-flex align-items-center justify-content-center"
               disabled={isSubmitting}
               style={{
                 backgroundColor: theme.primary,
                 color: "#ffffff",
                 borderRadius: "8px",
                 border: `1px solid ${theme.primaryDark}`,
-                padding: "0.5rem 1.2rem",
-                fontSize: "0.85rem",
                 transition: "background-color 0.25s ease, transform 0.2s ease",
               }}
               onMouseEnter={(e) => {

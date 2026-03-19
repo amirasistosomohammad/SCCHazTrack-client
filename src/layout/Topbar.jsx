@@ -129,7 +129,9 @@ const Topbar = ({ onToggleSidebar }) => {
                 {user?.name || user?.email || 'User'}
               </li>
               <li>
-                <span className="dropdown-item small text-muted py-1">{user?.email}</span>
+                <span className="dropdown-item small text-muted py-1 topbar-email-item">
+                  {user?.email}
+                </span>
               </li>
               <li className="dropdown-separator" />
               <li>
@@ -158,10 +160,15 @@ const Topbar = ({ onToggleSidebar }) => {
         .custom-dropdown-item {
           background: none; border: none; width: 100%; text-align: left; cursor: pointer;
           padding: 0.375rem 1rem; color: #212529;
-          transition: all 0.15s ease-in-out;
+          transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
         }
         .custom-dropdown-item:hover {
           background-color: #f8f9fa; color: #16181b;
+        }
+        .topbar-email-item {
+          cursor: default;
+          transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+          will-change: transform;
         }
         .logout-item { color: #dc3545 !important; }
         .logout-item:hover {

@@ -21,6 +21,9 @@ const Sidebar = ({ onCloseSidebar }) => {
   const role = user?.role
   const isAdmin = role === 'admin'
   const isReporter = !isAdmin
+  // In the current codebase, "personnel" is not a first-class role yet.
+  // For now, we treat all non-admin users (reporter flow) as the personnel-side user experience.
+  const isPersonnel = !isAdmin
 
   const menuSections = [
     {
@@ -29,17 +32,31 @@ const Sidebar = ({ onCloseSidebar }) => {
         { icon: 'fas fa-tachometer-alt', label: 'System Dashboard', href: '/dashboard' },
       ],
     },
-    ...(isReporter
+    ...(isPersonnel
       ? [
           {
-            heading: 'REPORTING',
+            heading: 'HAZARD REPORTING',
             items: [
-              { icon: 'fas fa-plus-circle', label: 'Submit Hazard', href: '/reporter/submit' },
-              { icon: 'fas fa-clipboard-list', label: 'My Reports', href: '/reporter/my-reports' },
+              {
+                icon: 'fas fa-plus-circle',
+                label: 'Submit Hazard Report',
+                href: '/reporter/submit',
+              },
+              {
+                icon: 'fas fa-clipboard-list',
+                label: 'My Hazard Reports',
+                href: '/reporter/my-reports',
+              },
             ],
           },
           {
-            heading: 'ACCOUNT SERVICES',
+            heading: 'NOTIFICATIONS',
+            items: [
+              { icon: 'fas fa-bell', label: 'Notification Center', href: '/personnel/notifications' },
+            ],
+          },
+          {
+            heading: 'ACCOUNT MANAGEMENT',
             items: [
               { icon: 'fas fa-user', label: 'My Profile', href: '/profile' },
             ],

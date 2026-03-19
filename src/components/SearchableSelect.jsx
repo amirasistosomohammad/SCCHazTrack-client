@@ -2,7 +2,8 @@ import { useState, useRef, useEffect, useLayoutEffect, useMemo, useCallback } fr
 import { createPortal } from "react-dom";
 import { FaExclamationCircle, FaCheckCircle } from "react-icons/fa";
 
-const DROPDOWN_Z_INDEX = 10002;
+// Must sit above modal overlay (z-index 12000) so it is visible inside PortalModal.
+const DROPDOWN_Z_INDEX = 13000;
 
 function filterOptions(options, query) {
   if (!options?.length) return [];
@@ -220,6 +221,9 @@ export default function SearchableSelect({
           aria-haspopup="listbox"
           disabled={disabled}
           placeholder={placeholder}
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck="false"
           style={baseInputStyle}
         />
         <div

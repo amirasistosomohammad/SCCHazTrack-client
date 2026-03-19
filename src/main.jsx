@@ -15,7 +15,7 @@ createRoot(document.getElementById("root")).render(
       <AuthProvider>
         <BrandingProvider>
           <App />
-          <ToastContainer position="top-right" autoClose={3000} />
+          <ToastContainer position="top-right" autoClose={3000} style={{ zIndex: 20000 }} />
         </BrandingProvider>
       </AuthProvider>
     </BrowserRouter>

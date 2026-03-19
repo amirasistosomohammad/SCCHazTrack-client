@@ -7,13 +7,13 @@ export default function ReporterHome() {
 
   return (
     <div style={{ maxWidth: 900, margin: "24px auto", padding: 16 }}>
-      <h2>Reporter Dashboard</h2>
+      <h2>Hazard Reporting Dashboard</h2>
       <div style={{ marginBottom: 12, color: "#444" }}>
         Signed in as <b>{user?.name}</b> ({user?.email})
       </div>
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-        <Link to="/reporter/submit">Submit Hazard</Link>
-        <Link to="/reporter/my-reports">My Reports</Link>
+        <Link to="/reporter/submit">Submit Hazard Report</Link>
+        <Link to="/reporter/my-reports">My Hazard Reports</Link>
       </div>
     </div>
   );
