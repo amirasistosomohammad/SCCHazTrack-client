@@ -244,9 +244,8 @@ export default function SubmitHazard() {
       form.append("description", description);
       attachments.forEach((f) => form.append("attachments[]", f));
 
-      const res = await api.post("/hazards", form, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      // Let Axios/browser set the correct multipart boundary.
+      const res = await api.post("/hazards", form);
 
       initialSnapshotRef.current = null;
       navigate("/reporter/my-reports");

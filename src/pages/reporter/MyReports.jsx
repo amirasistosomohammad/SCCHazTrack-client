@@ -446,9 +446,8 @@ export default function MyReports() {
     imageFiles.forEach((f) => form.append("attachments[]", f));
     setEditSaving(true);
     try {
-      const res = await api.post(`/hazards/${editReportId}/attachments`, form, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      // Let Axios/browser set the correct multipart boundary.
+      const res = await api.post(`/hazards/${editReportId}/attachments`, form);
       const list = res.data?.data ?? [];
       setEditAttachments(list);
       patchAttachmentsForReport(editReportId, list);
