@@ -1109,9 +1109,12 @@ const Register = () => {
           role="contentinfo"
         >
           <div className="login-page-footer-inner">
+            <p className="login-page-footer-name">SCC HazTrack</p>
+            <p className="login-page-footer-tagline">
+              SCC Hazard Reporting and Tracking System
+            </p>
             <p className="login-page-footer-copy">
-              © 2026 SCC HazTrack. SCC Hazard Reporting and Tracking System. All
-              rights reserved.
+              © {new Date().getFullYear()} SCC. All rights reserved.
             </p>
           </div>
         </footer>

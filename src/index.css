@@ -530,42 +530,37 @@ label {
 
 /* ===== LOGIN PAGE FOOTER – system footprint, corporate / government style ===== */
 .login-page-footer {
-  padding: 1rem 1rem;
+  padding: 0.75rem 1rem 1rem;
   text-align: center;
-  border-top: 1px solid var(--footer-border, #dcedc8);
-  background: linear-gradient(
-    180deg,
-    rgba(241, 248, 233, 0.92) 0%,
-    rgba(255, 255, 255, 0.98) 100%
-  );
-  box-shadow: 0 -6px 18px rgba(2, 44, 19, 0.08);
-  position: relative;
-}
-.login-page-footer::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    var(--primary-dark, #0a5f2d) 0%,
-    var(--primary-color, #0d7a3a) 50%,
-    var(--primary-dark, #0a5f2d) 100%
-  );
-  opacity: 0.95;
+  border-top: 1px solid rgba(13, 122, 58, 0.15);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 .login-page-footer-inner {
   max-width: 480px;
   margin: 0 auto;
 }
-.login-page-footer-copy {
+.login-page-footer-name {
   margin: 0;
-  font-size: 0.8125rem;
-  color: var(--text-primary, #10172b);
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--primary-color, #0d7a3a);
+  text-transform: uppercase;
+}
+.login-page-footer-tagline {
+  margin: 0.2rem 0 0;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #64748b;
+  line-height: 1.3;
+}
+.login-page-footer-copy {
+  margin: 0.35rem 0 0;
+  font-size: 0.65rem;
+  color: #94a3b8;
+  font-weight: 500;
 }
 
 /* Auth bootstrap: corporate / government-style loading ring */
