@@ -35,7 +35,7 @@ const Sidebar = ({ onCloseSidebar }) => {
     ...(isPersonnel
       ? [
           {
-            heading: 'HAZARD REPORTING',
+            heading: 'HAZARD REPORTING PORTAL',
             items: [
               {
                 icon: 'fas fa-plus-circle',
@@ -46,6 +46,16 @@ const Sidebar = ({ onCloseSidebar }) => {
                 icon: 'fas fa-clipboard-list',
                 label: 'My Hazard Reports',
                 href: '/reporter/my-reports',
+              },
+            ],
+          },
+          {
+            heading: 'REPORT ATTACHMENTS',
+            items: [
+              {
+                icon: 'fas fa-images',
+                label: 'Report Attachments',
+                href: '/reporter/hazard-evidence',
               },
             ],
           },

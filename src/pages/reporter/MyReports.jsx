@@ -2812,7 +2812,7 @@ export default function MyReports() {
         ariaLabelledby="myreports-delete-title"
         overlayClassName="account-approvals-detail-overlay"
         backdropClassName="account-approvals-detail-backdrop"
-        panelClassName="account-approvals-detail-modal"
+        panelClassName="account-approvals-detail-modal myreports-delete-modal"
         durationMs={220}
         closeOnBackdrop
         closeOnEsc

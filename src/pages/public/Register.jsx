@@ -23,7 +23,13 @@ import { api } from "../../lib/api";
 
 const Register = () => {
   const navigate = useNavigate();
-  const { register: registerUser, verifyEmail, resendOtp, refreshMe, setUser } = useAuth();
+  const {
+    register: registerUser,
+    verifyEmail,
+    resendOtp,
+    refreshMe,
+    setUser,
+  } = useAuth();
 
   // Match Login page color scheme for UI consistency
   const theme = {
@@ -194,7 +200,10 @@ const Register = () => {
     return true;
   };
 
-  const normalizeOtp = (value) => String(value || "").replace(/\D+/g, "").slice(0, 6);
+  const normalizeOtp = (value) =>
+    String(value || "")
+      .replace(/\D+/g, "")
+      .slice(0, 6);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -214,17 +223,23 @@ const Register = () => {
       const result = await registerUser(payload);
       if (result?.success) {
         if (result?.requiresEmailVerification) {
-          const emailToVerify = (result?.email || payload.email || "").toString();
+          const emailToVerify = (
+            result?.email ||
+            payload.email ||
+            ""
+          ).toString();
           setPendingEmail(emailToVerify);
           setStep("otp");
           setOtp("");
           setOtpError("");
           setResendCooldown(RESEND_COOLDOWN_SECONDS);
-          showToast.success(result.message || "We sent a verification code to your email.");
+          showToast.success(
+            result.message || "We sent a verification code to your email.",
+          );
         } else {
           showToast.success(
             result.message ||
-              "Registration submitted successfully. You can log in once your account is approved."
+              "Registration submitted successfully. You can log in once your account is approved.",
           );
           navigate("/login");
         }
@@ -239,19 +254,20 @@ const Register = () => {
         ) {
           setFieldErrors((prev) => ({
             ...prev,
-            email: result?.error || "An account with this email already exists.",
+            email:
+              result?.error || "An account with this email already exists.",
           }));
         }
         showToast.error(
           result?.error ||
-            "Unable to complete registration. Please review your details and try again."
+            "Unable to complete registration. Please review your details and try again.",
         );
       }
     } catch (error) {
       console.error("Registration error:", error);
       showToast.error(
         error?.message ||
-          "There was an error creating your account. Please try again."
+          "There was an error creating your account. Please try again.",
       );
     } finally {
       setIsSubmitting(false);
@@ -270,7 +286,10 @@ const Register = () => {
     setIsVerifyingOtp(true);
     setOtpError("");
     try {
-      const res = await verifyEmail({ email: pendingEmail || form.email, otp: clean });
+      const res = await verifyEmail({
+        email: pendingEmail || form.email,
+        otp: clean,
+      });
       if (res?.success) {
         if (res?.user) {
           // Session cookie is set server-side; update client state immediately.
@@ -298,7 +317,10 @@ const Register = () => {
     if (resendCooldown > 0) return;
     setIsResendingOtp(true);
     try {
-      const res = await resendOtp({ email: pendingEmail || form.email, purpose: "email_verify" });
+      const res = await resendOtp({
+        email: pendingEmail || form.email,
+        purpose: "email_verify",
+      });
       if (res?.success) {
         setResendCooldown(RESEND_COOLDOWN_SECONDS);
         showToast.success(res.message || "A new code has been sent.");
@@ -411,23 +433,28 @@ const Register = () => {
               className="text-center fw-bold mb-2"
               style={{ color: theme.primary }}
             >
-              {step === "otp" ? "Verify your email" : "Create your SCC HazTrack account"}
+              {step === "otp"
+                ? "Verify your email"
+                : "Create your SCC HazTrack account"}
             </h5>
             <p
               className="text-center mb-4 small"
               style={{ color: theme.textSecondary }}
             >
-              {step === "otp"
-                ? (
-                    <>
-                      Enter the 6-digit code we sent to{" "}
-                      <span className="fw-semibold" style={{ color: theme.textPrimary }}>
-                        {pendingEmail || form.email}
-                      </span>
-                      .
-                    </>
-                  )
-                : "Register using your official institutional email, EDP number, and campus information to access the hazard reporting dashboard."}
+              {step === "otp" ? (
+                <>
+                  Enter the 6-digit code we sent to{" "}
+                  <span
+                    className="fw-semibold"
+                    style={{ color: theme.textPrimary }}
+                  >
+                    {pendingEmail || form.email}
+                  </span>
+                  .
+                </>
+              ) : (
+                "Register using your official institutional email, EDP number, and campus information to access the hazard reporting dashboard."
+              )}
             </p>
 
             <AnimatePresence mode="wait" custom={direction}>
@@ -615,7 +642,9 @@ const Register = () => {
                         }}
                         theme={{
                           primary: theme.primary,
-                          borderColor: fieldErrors.campus ? "#dc3545" : "var(--input-border)",
+                          borderColor: fieldErrors.campus
+                            ? "#dc3545"
+                            : "var(--input-border)",
                           textPrimary: "var(--input-text)",
                         }}
                       />
@@ -842,7 +871,8 @@ const Register = () => {
                       }}
                       onMouseEnter={(e) => {
                         if (!isSubmitting) {
-                          e.currentTarget.style.backgroundColor = theme.primaryDark;
+                          e.currentTarget.style.backgroundColor =
+                            theme.primaryDark;
                           e.currentTarget.style.transform = "translateY(-1px)";
                           e.currentTarget.style.boxShadow =
                             "0 10px 18px rgba(15, 23, 42, 0.18)";
@@ -928,7 +958,10 @@ const Register = () => {
                         e.currentTarget.style.transform = "translateY(0)";
                       }}
                     >
-                      <span className="d-inline-flex align-items-center" style={{ gap: "8px" }}>
+                      <span
+                        className="d-inline-flex align-items-center"
+                        style={{ gap: "8px" }}
+                      >
                         <FaArrowLeft />
                         Back to sign up
                       </span>
@@ -978,7 +1011,8 @@ const Register = () => {
                       }}
                       onMouseEnter={(e) => {
                         if (!isVerifyingOtp) {
-                          e.currentTarget.style.backgroundColor = theme.primaryDark;
+                          e.currentTarget.style.backgroundColor =
+                            theme.primaryDark;
                           e.currentTarget.style.transform = "translateY(-1px)";
                           e.currentTarget.style.boxShadow =
                             "0 10px 18px rgba(15, 23, 42, 0.18)";
@@ -1070,14 +1104,14 @@ const Register = () => {
         </div>
 
         {/* Footer pinned to bottom – match Login page footer */}
-        <footer className="login-page-footer position-relative" role="contentinfo">
+        <footer
+          className="login-page-footer position-relative"
+          role="contentinfo"
+        >
           <div className="login-page-footer-inner">
-            <p className="login-page-footer-name">SCC HazTrack</p>
-            <p className="login-page-footer-tagline">
-              SCC Hazard Reporting and Tracking System
-            </p>
             <p className="login-page-footer-copy">
-              © {new Date().getFullYear()} SCC. All rights reserved.
+              © 2026 SCC HazTrack. SCC Hazard Reporting and Tracking System. All
+              rights reserved.
             </p>
           </div>
         </footer>

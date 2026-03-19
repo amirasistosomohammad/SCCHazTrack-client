@@ -1,21 +1,18 @@
-import React from 'react'
-
-const FOOTER_TAGLINE = 'SCC Hazard Reporting and Tracking System'
+import React from "react";
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear()
-
   return (
     <footer className="py-3 bg-light mt-auto">
       <div className="container-fluid">
         <div className="d-flex flex-column flex-md-row align-items-center justify-content-between small">
           <span className="text-muted">
-            &copy; {currentYear} SCC HazTrack. {FOOTER_TAGLINE}. All rights reserved.
+            © 2026 SCC HazTrack. SCC Hazard Reporting and Tracking System. All
+            rights reserved.
           </span>
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

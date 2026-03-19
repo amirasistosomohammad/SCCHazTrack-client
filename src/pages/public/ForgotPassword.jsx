@@ -20,7 +20,7 @@ export default function ForgotPassword() {
       backgroundWhite: "#ffffff",
       borderColor: "#e2e8f0",
     }),
-    []
+    [],
   );
 
   const [email, setEmail] = useState("");
@@ -38,11 +38,13 @@ export default function ForgotPassword() {
       if (res?.success) {
         showToast.success(
           res.message ||
-            "If an account exists with this email, a reset link has been sent. Check your inbox."
+            "If an account exists with this email, a reset link has been sent. Check your inbox.",
         );
         navigate("/login", { replace: true });
       } else {
-        showToast.error(res?.error || "Something went wrong. Please try again.");
+        showToast.error(
+          res?.error || "Something went wrong. Please try again.",
+        );
       }
     } finally {
       setIsSubmitting(false);
@@ -78,16 +80,27 @@ export default function ForgotPassword() {
                 src={Logo}
                 alt="SCC HazTrack Logo"
                 className="img-fluid"
-                style={{ width: "112px", height: "112px", objectFit: "contain" }}
+                style={{
+                  width: "112px",
+                  height: "112px",
+                  objectFit: "contain",
+                }}
               />
             </div>
           </div>
 
-          <h5 className="text-center fw-bolder fs-4" style={{ color: theme.primary }}>
+          <h5
+            className="text-center fw-bolder fs-4"
+            style={{ color: theme.primary }}
+          >
             Forgot password?
           </h5>
-          <p className="text-center small mb-4" style={{ color: theme.textSecondary }}>
-            Enter your email and we&apos;ll send you a link to reset your password.
+          <p
+            className="text-center small mb-4"
+            style={{ color: theme.textSecondary }}
+          >
+            Enter your email and we&apos;ll send you a link to reset your
+            password.
           </p>
 
           <form onSubmit={handleSubmit}>
@@ -137,14 +150,16 @@ export default function ForgotPassword() {
                 if (!isSubmitting) {
                   e.currentTarget.style.backgroundColor = theme.primaryDark;
                   e.currentTarget.style.transform = "translateY(-2px)";
-                  e.currentTarget.style.boxShadow = "0 6px 20px rgba(13, 122, 58, 0.3)";
+                  e.currentTarget.style.boxShadow =
+                    "0 6px 20px rgba(13, 122, 58, 0.3)";
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isSubmitting) {
                   e.currentTarget.style.backgroundColor = theme.primary;
                   e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "0 2px 10px rgba(13, 122, 58, 0.3)";
+                  e.currentTarget.style.boxShadow =
+                    "0 2px 10px rgba(13, 122, 58, 0.3)";
                 }
               }}
             >
@@ -185,18 +200,17 @@ export default function ForgotPassword() {
         </div>
       </div>
 
-      <footer className="login-page-footer position-relative" role="contentinfo">
+      <footer
+        className="login-page-footer position-relative"
+        role="contentinfo"
+      >
         <div className="login-page-footer-inner">
-          <p className="login-page-footer-name">SCC HazTrack</p>
-          <p className="login-page-footer-tagline">
-            SCC Hazard Reporting and Tracking System
-          </p>
           <p className="login-page-footer-copy">
-            © {new Date().getFullYear()} SCC. All rights reserved.
+            © 2026 SCC HazTrack. SCC Hazard Reporting and Tracking System. All
+            rights reserved.
           </p>
         </div>
       </footer>
     </div>
   );
 }
-

@@ -37,7 +37,7 @@ export default function Login() {
 
   const closeAccountStatusModal = useCallback(
     () => setAccountStatusModal(null),
-    []
+    [],
   );
 
   useEffect(() => {
@@ -126,8 +126,8 @@ export default function Login() {
             result.accountStatus === "deactivated" ? "deactivated" : "rejected";
           let remarks =
             type === "deactivated"
-              ? result.deactivation_remarks ?? null
-              : result.rejection_remarks ?? null;
+              ? (result.deactivation_remarks ?? null)
+              : (result.rejection_remarks ?? null);
           if (!remarks && result.error && result.error.includes(" Reason: ")) {
             const parts = result.error.split(" Reason: ");
             remarks = parts[1] ? parts[1].trim() : null;
@@ -136,13 +136,13 @@ export default function Login() {
         } else {
           showToast.error(
             result.error ||
-              "Invalid credentials. Please check your email and password."
+              "Invalid credentials. Please check your email and password.",
           );
         }
       }
     } catch (error) {
       showToast.error(
-        "Unable to connect to the server. Please check your internet connection and try again."
+        "Unable to connect to the server. Please check your internet connection and try again.",
       );
       console.error("Login error:", error);
     } finally {
@@ -395,7 +395,10 @@ export default function Login() {
           <>
             <div className="account-approvals-detail-header">
               <div className="account-approvals-detail-header-text">
-                <h5 id="login-account-status-title" className="mb-0 fw-semibold">
+                <h5
+                  id="login-account-status-title"
+                  className="mb-0 fw-semibold"
+                >
                   {accountStatusModal.type === "deactivated"
                     ? "Account deactivated"
                     : "Account rejected"}
@@ -457,18 +460,17 @@ export default function Login() {
       </PortalModal>
 
       {/* Footer pinned to bottom – match SCC HazTrack system */}
-      <footer className="login-page-footer position-relative" role="contentinfo">
+      <footer
+        className="login-page-footer position-relative"
+        role="contentinfo"
+      >
         <div className="login-page-footer-inner">
-          <p className="login-page-footer-name">SCC HazTrack</p>
-          <p className="login-page-footer-tagline">
-            SCC Hazard Reporting and Tracking System
-          </p>
           <p className="login-page-footer-copy">
-            © {new Date().getFullYear()} SCC. All rights reserved.
+            © 2026 SCC HazTrack. SCC Hazard Reporting and Tracking System. All
+            rights reserved.
           </p>
         </div>
       </footer>
     </div>
   );
 }
-

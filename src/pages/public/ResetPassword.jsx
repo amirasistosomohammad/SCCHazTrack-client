@@ -26,7 +26,7 @@ export default function ResetPassword() {
       backgroundLight: "#f8fafc",
       borderColor: "#e2e8f0",
     }),
-    []
+    [],
   );
 
   const [password, setPassword] = useState("");
@@ -57,7 +57,8 @@ export default function ResetPassword() {
       const next = { ...prev };
       if (next.password) next.password = "";
       if (next.confirmPassword) {
-        if (confirmPassword && value !== confirmPassword) next.confirmPassword = "Passwords do not match.";
+        if (confirmPassword && value !== confirmPassword)
+          next.confirmPassword = "Passwords do not match.";
         else next.confirmPassword = "";
       }
       return next;
@@ -69,7 +70,8 @@ export default function ResetPassword() {
     setFieldErrors((prev) => {
       const next = { ...prev };
       if (next.confirmPassword) next.confirmPassword = "";
-      if (value && password && value !== password) next.confirmPassword = "Passwords do not match.";
+      if (value && password && value !== password)
+        next.confirmPassword = "Passwords do not match.";
       return next;
     });
   };
@@ -78,12 +80,17 @@ export default function ResetPassword() {
     e.preventDefault();
     setFieldErrors({});
     if (!token) {
-      showToast.error("Reset link is missing or invalid. Please request a new reset link.");
+      showToast.error(
+        "Reset link is missing or invalid. Please request a new reset link.",
+      );
       return;
     }
     const pwdValidation = validatePassword(password);
     setPasswordValidation(pwdValidation);
-    const pwdOk = pwdValidation.minLength && pwdValidation.hasLetter && pwdValidation.hasNumber;
+    const pwdOk =
+      pwdValidation.minLength &&
+      pwdValidation.hasLetter &&
+      pwdValidation.hasNumber;
 
     const errors = {};
     if (!password) {
@@ -108,10 +115,14 @@ export default function ResetPassword() {
     try {
       const res = await resetPassword({ resetToken: token, password });
       if (res?.success) {
-        showToast.success(res.message || "Password updated successfully. You can now sign in.");
+        showToast.success(
+          res.message || "Password updated successfully. You can now sign in.",
+        );
         navigate("/login", { replace: true });
       } else {
-        showToast.error(res?.error || "Unable to reset password. Please try again.");
+        showToast.error(
+          res?.error || "Unable to reset password. Please try again.",
+        );
       }
     } finally {
       setIsSubmitting(false);
@@ -147,15 +158,25 @@ export default function ResetPassword() {
                 src={Logo}
                 alt="SCC HazTrack Logo"
                 className="img-fluid"
-                style={{ width: "112px", height: "112px", objectFit: "contain" }}
+                style={{
+                  width: "112px",
+                  height: "112px",
+                  objectFit: "contain",
+                }}
               />
             </div>
           </div>
 
-          <h5 className="text-center fw-bolder fs-4" style={{ color: theme.primary }}>
+          <h5
+            className="text-center fw-bolder fs-4"
+            style={{ color: theme.primary }}
+          >
             Reset password
           </h5>
-          <p className="text-center small mb-4" style={{ color: theme.textSecondary }}>
+          <p
+            className="text-center small mb-4"
+            style={{ color: theme.textSecondary }}
+          >
             Create a new password for your account.
           </p>
 
@@ -185,11 +206,15 @@ export default function ResetPassword() {
                 style={{
                   backgroundColor: "var(--input-bg)",
                   color: "var(--input-text)",
-                  borderColor: fieldErrors.password ? "#dc3545" : "var(--input-border)",
+                  borderColor: fieldErrors.password
+                    ? "#dc3545"
+                    : "var(--input-border)",
                 }}
               />
               <span
-                onClick={() => !isSubmitting && setShowPassword((prev) => !prev)}
+                onClick={() =>
+                  !isSubmitting && setShowPassword((prev) => !prev)
+                }
                 className="position-absolute top-50 end-0 translate-middle-y me-3 text-muted"
                 style={{ cursor: isSubmitting ? "not-allowed" : "pointer" }}
                 role="button"
@@ -219,7 +244,9 @@ export default function ResetPassword() {
                     <span
                       style={{
                         fontWeight: 600,
-                        color: passwordValidation.minLength ? theme.primary : theme.textSecondary,
+                        color: passwordValidation.minLength
+                          ? theme.primary
+                          : theme.textSecondary,
                       }}
                     >
                       • At least 8 characters
@@ -229,7 +256,9 @@ export default function ResetPassword() {
                     <span
                       style={{
                         fontWeight: 600,
-                        color: passwordValidation.hasLetter ? theme.primary : theme.textSecondary,
+                        color: passwordValidation.hasLetter
+                          ? theme.primary
+                          : theme.textSecondary,
                       }}
                     >
                       • Contains a letter
@@ -239,7 +268,9 @@ export default function ResetPassword() {
                     <span
                       style={{
                         fontWeight: 600,
-                        color: passwordValidation.hasNumber ? theme.primary : theme.textSecondary,
+                        color: passwordValidation.hasNumber
+                          ? theme.primary
+                          : theme.textSecondary,
                       }}
                     >
                       • Contains a number
@@ -287,7 +318,9 @@ export default function ResetPassword() {
                 style={{
                   backgroundColor: "var(--input-bg)",
                   color: "var(--input-text)",
-                  borderColor: fieldErrors.confirmPassword ? "#dc3545" : "var(--input-border)",
+                  borderColor: fieldErrors.confirmPassword
+                    ? "#dc3545"
+                    : "var(--input-border)",
                 }}
               />
               <span
@@ -305,7 +338,9 @@ export default function ResetPassword() {
                   }
                 }}
                 aria-label={
-                  showConfirmPassword ? "Hide confirm password" : "Show confirm password"
+                  showConfirmPassword
+                    ? "Hide confirm password"
+                    : "Show confirm password"
                 }
               >
                 {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
@@ -341,14 +376,16 @@ export default function ResetPassword() {
                 if (!isSubmitting) {
                   e.currentTarget.style.backgroundColor = theme.primaryDark;
                   e.currentTarget.style.transform = "translateY(-2px)";
-                  e.currentTarget.style.boxShadow = "0 6px 20px rgba(13, 122, 58, 0.3)";
+                  e.currentTarget.style.boxShadow =
+                    "0 6px 20px rgba(13, 122, 58, 0.3)";
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isSubmitting) {
                   e.currentTarget.style.backgroundColor = theme.primary;
                   e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "0 2px 10px rgba(13, 122, 58, 0.3)";
+                  e.currentTarget.style.boxShadow =
+                    "0 2px 10px rgba(13, 122, 58, 0.3)";
                 }
               }}
             >
@@ -389,18 +426,17 @@ export default function ResetPassword() {
         </div>
       </div>
 
-      <footer className="login-page-footer position-relative" role="contentinfo">
+      <footer
+        className="login-page-footer position-relative"
+        role="contentinfo"
+      >
         <div className="login-page-footer-inner">
-          <p className="login-page-footer-name">SCC HazTrack</p>
-          <p className="login-page-footer-tagline">
-            SCC Hazard Reporting and Tracking System
-          </p>
           <p className="login-page-footer-copy">
-            © {new Date().getFullYear()} SCC. All rights reserved.
+            © 2026 SCC HazTrack. SCC Hazard Reporting and Tracking System. All
+            rights reserved.
           </p>
         </div>
       </footer>
     </div>
   );
 }
-

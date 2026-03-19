@@ -9,6 +9,7 @@ import InDevelopment from "./pages/InDevelopment";
 import ReporterHome from "./pages/reporter/ReporterHome";
 import SubmitHazard from "./pages/reporter/SubmitHazard";
 import MyReports from "./pages/reporter/MyReports";
+import HazardEvidenceViewer from "./pages/reporter/HazardEvidenceViewer";
 import ReportDetail from "./pages/reporter/ReportDetail";
 import AdminHome from "./pages/administrator/AdminHome";
 import AdminInbox from "./pages/administrator/AdminInbox";
@@ -115,6 +116,7 @@ export default function App() {
         <Route path="reporter" element={<ReporterHome />} />
         <Route path="reporter/submit" element={<SubmitHazard />} />
         <Route path="reporter/my-reports" element={<MyReports />} />
+        <Route path="reporter/hazard-evidence" element={<HazardEvidenceViewer />} />
         <Route path="reporter/reports/:id" element={<ReportDetail />} />
         <Route
           path="personnel/notifications"
