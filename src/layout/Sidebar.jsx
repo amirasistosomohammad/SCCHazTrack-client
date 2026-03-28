@@ -104,12 +104,6 @@ const Sidebar = ({ onCloseSidebar }) => {
               { icon: 'fas fa-users', label: 'Manage Users', href: '/manager/users' },
             ],
           },
-          {
-            heading: 'REPORTING',
-            items: [
-              { icon: 'fas fa-chart-bar', label: 'Reports', href: '/reports' },
-            ],
-          },
         ]
       : []),
   ]
