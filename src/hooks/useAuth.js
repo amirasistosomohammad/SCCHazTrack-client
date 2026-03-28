@@ -10,6 +10,9 @@ export function useAuth() {
       const res = await api.post("/auth/login", { email, password });
       if (res.data?.token) setAuthToken(res.data.token);
       await refreshMe();
+      if (res.data?.user) {
+        setUser((prev) => prev ?? res.data.user);
+      }
       return { success: true, user: res.data?.user ?? null };
     } catch (err) {
       const httpStatus = err?.response?.status;
@@ -64,6 +67,10 @@ export function useAuth() {
       await ensureCsrfCookie();
       const res = await api.post("/auth/verify-email", payload);
       if (res.data?.token) setAuthToken(res.data.token);
+      await refreshMe();
+      if (res.data?.user) {
+        setUser((prev) => prev ?? res.data.user);
+      }
       return { success: true, ...res.data };
     } catch (err) {
       const httpStatus = err?.response?.status;

@@ -11,9 +11,13 @@ export function AuthProvider({ children }) {
     try {
       const res = await api.get("/auth/me");
       setUser(res.data?.user ?? null);
-    } catch {
-      setAuthToken(null);
-      setUser(null);
+    } catch (err) {
+      const status = err?.response?.status;
+      if (status === 401 || status === 403) {
+        setAuthToken(null);
+        setUser(null);
+      }
+      // Keep Bearer token on 5xx / network blips so one gateway timeout does not log the user out.
     } finally {
       setLoading(false);
     }
@@ -26,7 +30,7 @@ export function AuthProvider({ children }) {
 
   // Keep auth state in sync: if an admin deactivates this account, we should log out quickly.
   useEffect(() => {
-    const intervalMs = 15000;
+    const intervalMs = 30000;
     const id = setInterval(() => {
       refreshMe();
     }, intervalMs);
