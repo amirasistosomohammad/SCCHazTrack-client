@@ -30,6 +30,7 @@ export default function HazardEvidenceViewer() {
   const [attachmentObjectUrlErrors, setAttachmentObjectUrlErrors] = useState({}); // { [key: string]: string }
   const [attachmentLoadStates, setAttachmentLoadStates] = useState({}); // { [key: string]: 'idle'|'loading'|'loaded'|'error' }
   const attachmentObjectUrlsRef = useRef({});
+  const [attachmentDownloadError, setAttachmentDownloadError] = useState("");
 
   const formatDateTime = (value) => {
     if (!value) return "—";
@@ -176,6 +177,40 @@ export default function HazardEvidenceViewer() {
     setAttachmentObjectUrlErrors((prev) => ({ ...prev, [key]: lastError || "Failed to load image" }));
     setAttachmentLoadStates((prev) => ({ ...prev, [key]: "error" }));
     return "";
+  };
+
+  const downloadAttachment = async (attachment) => {
+    const reportId = selectedReportId ?? report?.id ?? viewReport?.id ?? null;
+    const attachmentId = typeof attachment === "object" ? attachment?.id : null;
+    const fallbackName =
+      attachment?.original_name ||
+      attachment?.originalName ||
+      attachment?.name ||
+      `hazard-${reportId}-attachment-${attachmentId}`;
+
+    if (!reportId || !attachmentId) {
+      setAttachmentDownloadError("Unable to download this attachment.");
+      return;
+    }
+
+    setAttachmentDownloadError("");
+    try {
+      const res = await api.get(`/hazards/${reportId}/attachments/${attachmentId}`, {
+        responseType: "blob",
+      });
+      const blobUrl = URL.createObjectURL(res.data);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = fallbackName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 1500);
+    } catch (err) {
+      setAttachmentDownloadError(
+        err?.response?.data?.message || err?.message || "Unable to download attachment."
+      );
+    }
   };
 
   const openReport = (id) => {
@@ -847,6 +882,15 @@ export default function HazardEvidenceViewer() {
                           </div>
                         </div>
 
+                        {attachmentDownloadError ? (
+                          <div
+                            className="alert alert-warning py-2 px-3 mb-3"
+                            style={{ fontFamily: interFamily, fontSize: "0.85rem" }}
+                          >
+                            {attachmentDownloadError}
+                          </div>
+                        ) : null}
+
                         {attachments.length ? (
                           <div
                             className="d-grid"
@@ -982,6 +1026,40 @@ export default function HazardEvidenceViewer() {
                                       ? `${Math.round((a.size_bytes / 1024) * 10) / 10} KB`
                                       : " "}
                                   </div>
+
+                                  <button
+                                    type="button"
+                                    className="btn btn-light btn-sm d-inline-flex align-items-center gap-1"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      downloadAttachment(a);
+                                    }}
+                                    style={{
+                                      borderRadius: 999,
+                                      borderColor: "#bbf7d0",
+                                      color: "#166534",
+                                      fontFamily: interFamily,
+                                      fontSize: "0.75rem",
+                                      paddingInline: "0.55rem",
+                                      transition:
+                                        "background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.15s ease",
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      e.currentTarget.style.backgroundColor = "#ecfdf3";
+                                      e.currentTarget.style.borderColor = "#86efac";
+                                      e.currentTarget.style.color = "#14532d";
+                                      e.currentTarget.style.transform = "translateY(-1px)";
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      e.currentTarget.style.backgroundColor = "#ffffff";
+                                      e.currentTarget.style.borderColor = "#bbf7d0";
+                                      e.currentTarget.style.color = "#166534";
+                                      e.currentTarget.style.transform = "translateY(0)";
+                                    }}
+                                  >
+                                    <i className="fas fa-download" aria-hidden="true" />
+                                    <span>Download</span>
+                                  </button>
                                 </div>
                               );
                             })}

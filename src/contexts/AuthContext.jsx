@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { api } from "../lib/api";
+import { api, setAuthToken } from "../lib/api";
 
 const AuthContext = createContext(null);
 
@@ -12,6 +12,7 @@ export function AuthProvider({ children }) {
       const res = await api.get("/auth/me");
       setUser(res.data?.user ?? null);
     } catch {
+      setAuthToken(null);
       setUser(null);
     } finally {
       setLoading(false);
@@ -20,6 +21,16 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     refreshMe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Keep auth state in sync: if an admin deactivates this account, we should log out quickly.
+  useEffect(() => {
+    const intervalMs = 15000;
+    const id = setInterval(() => {
+      refreshMe();
+    }, intervalMs);
+    return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

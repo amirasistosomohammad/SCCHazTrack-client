@@ -1,11 +1,13 @@
 // Copied from DATravelApp-client – same structure, ATIn menu only
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useLocation, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { api } from '../lib/api'
 
 const Sidebar = ({ onCloseSidebar }) => {
   const { user } = useAuth()
   const location = useLocation()
+  const [notificationUnread, setNotificationUnread] = useState(0)
 
   const isActiveLink = (href) => {
     const normalize = (p) => (p || '').replace(/\/+$/, '') || '/'
@@ -24,6 +26,26 @@ const Sidebar = ({ onCloseSidebar }) => {
   // In the current codebase, "personnel" is not a first-class role yet.
   // For now, we treat all non-admin users (reporter flow) as the personnel-side user experience.
   const isPersonnel = !isAdmin
+
+  const fetchNotificationUnread = useCallback(async () => {
+    if (!user || isAdmin) return
+    try {
+      const res = await api.get('/notifications')
+      setNotificationUnread(Number(res.data?.unread_count) || 0)
+    } catch {
+      setNotificationUnread(0)
+    }
+  }, [user, isAdmin])
+
+  useEffect(() => {
+    fetchNotificationUnread()
+  }, [fetchNotificationUnread, location.pathname])
+
+  useEffect(() => {
+    const onFocus = () => fetchNotificationUnread()
+    window.addEventListener('focus', onFocus)
+    return () => window.removeEventListener('focus', onFocus)
+  }, [fetchNotificationUnread])
 
   const menuSections = [
     {
@@ -80,8 +102,6 @@ const Sidebar = ({ onCloseSidebar }) => {
             items: [
               { icon: 'fas fa-inbox', label: 'Admin Inbox', href: '/admin/inbox' },
               { icon: 'fas fa-users', label: 'Manage Users', href: '/manager/users' },
-              { icon: 'fas fa-tags', label: 'Manage Categories', href: '/manager/categories' },
-              { icon: 'fas fa-map-marker-alt', label: 'Manage Locations', href: '/manager/locations' },
             ],
           },
           {
@@ -111,7 +131,26 @@ const Sidebar = ({ onCloseSidebar }) => {
                       onClick={closeSidebarOnMobile}
                     >
                       <i className={`sb-nav-link-icon ${item.icon}`} />
-                      <span className="sb-nav-link-label">{item.label}</span>
+                      <span className="sb-nav-link-label d-inline-flex align-items-center gap-2 flex-wrap">
+                        <span>{item.label}</span>
+                        {item.href === '/personnel/notifications' && notificationUnread > 0 ? (
+                          <span
+                            className="badge rounded-pill"
+                            style={{
+                              fontSize: '0.65rem',
+                              fontWeight: 700,
+                              padding: '0.2em 0.5em',
+                              lineHeight: 1.2,
+                              backgroundColor: '#0C8A3B',
+                              color: '#ffffff',
+                              boxShadow: '0 0 0 1px rgba(255,255,255,0.2)',
+                            }}
+                            aria-label={`${notificationUnread} unread notifications`}
+                          >
+                            {notificationUnread > 99 ? '99+' : notificationUnread}
+                          </span>
+                        ) : null}
+                      </span>
                       {isActive && (
                         <i className="fas fa-chevron-right sb-nav-link-arrow" aria-hidden />
                       )}

@@ -1,0 +1,181 @@
+.manage-users-person-card {
+  position: relative;
+  height: 100%;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.manage-users-person-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.manage-users-card-top-strip {
+  width: 100%;
+  height: 8.75rem;
+  background: linear-gradient(180deg, #ecf7ef 0%, #dff0e5 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.manage-users-card-top-initials {
+  width: 4.25rem;
+  height: 4.25rem;
+  border-radius: 999px;
+  background: #0c8a3b;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(12, 138, 59, 0.22);
+}
+
+.manage-users-avatar-initials {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.manage-users-card-actions {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  gap: 0.35rem;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.manage-users-person-card:hover .manage-users-card-actions {
+  opacity: 1;
+}
+
+.manage-users-card-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  font-size: 0.85rem;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  transition: background 0.2s ease, transform 0.2s ease;
+  color: #fff;
+}
+
+.manage-users-card-btn-activate {
+  background: #0c8a3b;
+  border-color: #0c8a3b;
+}
+
+.manage-users-card-btn-activate:hover:not(:disabled) {
+  background: #0a6f31;
+  border-color: #0a6f31;
+  transform: translateY(-1px);
+}
+
+.manage-users-card-btn-deactivate {
+  background: #64748b;
+  border-color: #64748b;
+}
+
+.manage-users-card-btn-deactivate:hover:not(:disabled) {
+  background: #475569;
+  border-color: #475569;
+  transform: translateY(-1px);
+}
+
+.manage-users-card-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.manage-users-card-btn-view {
+  background: #0f766e;
+  border-color: #0f766e;
+}
+
+.manage-users-card-btn-view:hover:not(:disabled) {
+  background: #0d5f59;
+  border-color: #0d5f59;
+  transform: translateY(-1px);
+}
+
+.manage-users-card-btn-delete {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+.manage-users-card-btn-delete:hover:not(:disabled) {
+  background: #991b1b;
+  border-color: #991b1b;
+  transform: translateY(-1px);
+}
+
+.manage-users-card-body {
+  padding: 1rem;
+}
+
+.manage-users-card-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1e3a5f;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.manage-users-card-email {
+  font-size: 0.8125rem;
+  color: #4a5568;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 0.25rem;
+}
+
+.manage-users-card-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 0.75rem 0;
+}
+
+.manage-users-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8125rem;
+  margin-bottom: 0.35rem;
+}
+
+.manage-users-card-row:last-of-type {
+  margin-bottom: 0;
+}
+
+.manage-users-card-label {
+  color: #4a5568;
+  flex-shrink: 0;
+}
+
+.manage-users-card-value {
+  color: #1e3a5f;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 60%;
+  margin-left: 0.5rem;
+}
+
+@media (max-width: 767.98px) {
+  .manage-users-card-actions {
+    opacity: 1;
+  }
+}

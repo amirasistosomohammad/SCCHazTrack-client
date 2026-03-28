@@ -201,6 +201,11 @@
   max-width: 448px !important;
 }
 
+.login-status-modal {
+  width: 100% !important;
+  max-width: 420px !important;
+}
+
 /* Force Inter inside report details modal (Bootstrap utilities can override font-family). */
 .account-approvals-detail-modal.myreports-view-modal,
 .account-approvals-detail-modal.myreports-view-modal * {

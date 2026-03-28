@@ -14,6 +14,7 @@ import ReportDetail from "./pages/reporter/ReportDetail";
 import AdminHome from "./pages/administrator/AdminHome";
 import AdminInbox from "./pages/administrator/AdminInbox";
 import AdminReportDetail from "./pages/administrator/AdminReportDetail";
+import AdminEditReport from "./pages/administrator/AdminEditReport";
 import ManageUsers from "./pages/system_manager/ManageUsers";
 import ManageCategories from "./pages/system_manager/ManageCategories";
 import ManageLocations from "./pages/system_manager/ManageLocations";
@@ -83,6 +84,14 @@ export default function App() {
           element={
             <RoleRoute allow={["admin"]}>
               <AdminReportDetail />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="admin/reports/:id/edit"
+          element={
+            <RoleRoute allow={["admin"]}>
+              <AdminEditReport />
             </RoleRoute>
           }
         />

@@ -389,7 +389,7 @@ export default function Login() {
         overlayClassName="account-approvals-detail-overlay"
         backdropClassName="account-approvals-detail-backdrop"
         wrapClassName=""
-        panelClassName="account-approvals-detail-modal"
+        panelClassName="account-approvals-detail-modal login-status-modal"
       >
         {accountStatusModal ? (
           <>
