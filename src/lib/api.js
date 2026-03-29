@@ -4,8 +4,10 @@ const API_BASE = import.meta.env.VITE_LARAVEL_API;
 const ORIGIN = API_BASE?.endsWith("/api") ? API_BASE.slice(0, -4) : API_BASE;
 export const AUTH_TOKEN_STORAGE_KEY = "haztrack_auth_token";
 
-const MAX_RETRIES = Number(import.meta.env.VITE_API_MAX_RETRIES ?? 3);
+const MAX_RETRIES = Number(import.meta.env.VITE_API_MAX_RETRIES ?? 4);
 const RETRY_BASE_MS = Number(import.meta.env.VITE_API_RETRY_BASE_MS ?? 400);
+const DEFAULT_TIMEOUT_MS = Number(import.meta.env.VITE_API_TIMEOUT_MS ?? 90_000);
+const UPLOAD_TIMEOUT_MS = Number(import.meta.env.VITE_API_UPLOAD_TIMEOUT_MS ?? 180_000);
 
 const RETRYABLE_STATUS = new Set([502, 503, 504]);
 
@@ -43,10 +45,20 @@ export const api = axios.create({
   // Use Bearer tokens for authentication (see `setAuthToken`).
   // Do not rely on Sanctum cookie-based CSRF flows.
   withCredentials: false,
-  timeout: Number(import.meta.env.VITE_API_TIMEOUT_MS ?? 70_000),
+  timeout: DEFAULT_TIMEOUT_MS,
   headers: {
     Accept: "application/json",
   },
+});
+
+api.interceptors.request.use((config) => {
+  const data = config.data;
+  const isFormData =
+    typeof FormData !== "undefined" && data instanceof FormData;
+  if (isFormData) {
+    config.timeout = UPLOAD_TIMEOUT_MS;
+  }
+  return config;
 });
 
 api.interceptors.response.use(
