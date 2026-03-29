@@ -164,6 +164,38 @@
      the fixed row height; long text truncation is handled by inline spans. */
   overflow: visible;
 }
+
+/* Categories / Sites lookup tables — keep thead and tbody columns aligned (fixed layout + colgroup) */
+.manage-lookup-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.manage-lookup-table {
+  table-layout: fixed;
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+}
+.manage-lookup-table thead th,
+.manage-lookup-table tbody td {
+  vertical-align: middle;
+}
+.manage-lookup-table col.manage-lookup-col-num {
+  width: 5%;
+}
+.manage-lookup-table col.manage-lookup-col-actions {
+  width: 16%;
+}
+.manage-lookup-table col.manage-lookup-col-name {
+  width: 22%;
+}
+.manage-lookup-table col.manage-lookup-col-desc {
+  width: 42%;
+}
+.manage-lookup-table col.manage-lookup-col-status {
+  width: 15%;
+}
+
 .account-approvals-detail-backdrop {
   position: absolute;
   inset: 0;

@@ -245,7 +245,7 @@ export default function AdminReportDetail() {
               Report not found
             </p>
             <Link to="/admin/inbox" className="btn btn-success btn-sm">
-              Back to Inbox
+              Back to inbox
             </Link>
           </div>
         </div>

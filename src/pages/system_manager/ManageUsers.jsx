@@ -78,7 +78,7 @@ export default function ManageUsers() {
     return () => clearTimeout(t);
   }, [activeSummaryModal, summaryModalType]);
 
-  // In this system, only reporter account(s) should be shown in "Manage Users".
+  // In this system, only reporter account(s) should be shown on this screen.
   const reporterRows = useMemo(() => rows.filter((u) => u.role === "reporter"), [rows]);
 
   const filteredUsers = useMemo(() => {
@@ -207,7 +207,7 @@ export default function ManageUsers() {
                     color: "var(--text-primary)",
                   }}
                 >
-                  Manage Users
+                  User accounts
                 </h2>
                 <p
                   className="mb-0"
@@ -219,7 +219,7 @@ export default function ManageUsers() {
                     fontWeight: 600,
                   }}
                 >
-                  Maintain user records with structured search, filtering, and account controls.
+                  Search, filter, and manage reporter accounts.
                 </p>
               </div>
             </div>
@@ -280,7 +280,7 @@ export default function ManageUsers() {
                   color: "var(--text-primary)",
                 }}
               >
-                Manage Users
+                User accounts
               </h2>
               <p
                 className="mb-0"
@@ -292,7 +292,7 @@ export default function ManageUsers() {
                   fontWeight: 600,
                 }}
               >
-                Maintain user records with structured search, filtering, and account controls.
+                Search, filter, and manage reporter accounts.
               </p>
             </div>
           </div>

@@ -15,6 +15,7 @@ import AdminHome from "./pages/administrator/AdminHome";
 import AdminInbox from "./pages/administrator/AdminInbox";
 import AdminReportDetail from "./pages/administrator/AdminReportDetail";
 import AdminEditReport from "./pages/administrator/AdminEditReport";
+import SystemConfiguration from "./pages/administrator/SystemConfiguration";
 import ManageUsers from "./pages/system_manager/ManageUsers";
 import ManageCategories from "./pages/system_manager/ManageCategories";
 import ManageLocations from "./pages/system_manager/ManageLocations";
@@ -61,7 +62,14 @@ export default function App() {
         <Route path="reports" element={<InDevelopment title="Management Reports" description="Reports page is not yet implemented in SCC HazTrack." />} />
         <Route path="admin/users" element={<InDevelopment title="User Accounts" description="User management is not yet implemented in SCC HazTrack." />} />
         <Route path="admin/document-types" element={<InDevelopment title="Document Type Registry" description="Document types are not yet implemented in SCC HazTrack." />} />
-        <Route path="admin/settings" element={<InDevelopment title="System Configuration" description="System configuration is not yet implemented in SCC HazTrack." />} />
+        <Route
+          path="admin/settings"
+          element={
+            <RoleRoute allow={["admin"]}>
+              <SystemConfiguration />
+            </RoleRoute>
+          }
+        />
 
         <Route
           path="admin"

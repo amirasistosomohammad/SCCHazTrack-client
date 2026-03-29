@@ -631,24 +631,24 @@ export default function Dashboard() {
                         marginBottom: '0.75rem',
                       }}
                     >
-                      Administrative actions
+                      Admin tools
                     </div>
                     <div className="d-flex flex-wrap gap-2">
                       <Link to="/manager/users" className="btn btn-outline-success btn-sm">
                         <i className="fas fa-users me-2" />
-                        Manage users
+                        User accounts
                       </Link>
                       <Link to="/manager/categories" className="btn btn-outline-success btn-sm">
                         <i className="fas fa-tags me-2" />
-                        Categories
+                        Hazard categories
                       </Link>
                       <Link to="/manager/locations" className="btn btn-outline-success btn-sm">
                         <i className="fas fa-map-marker-alt me-2" />
-                        Locations
+                        Manage campus
                       </Link>
                       <Link to="/admin/inbox" className="btn btn-outline-secondary btn-sm">
                         <i className="fas fa-inbox me-2" />
-                        Inbox
+                        Report inbox
                       </Link>
                     </div>
                   </div>
@@ -696,19 +696,19 @@ export default function Dashboard() {
                         <>
                           <Link to="/admin/inbox" className="btn btn-success btn-sm">
                             <i className="fas fa-inbox me-2" />
-                            Inbox
+                            Report inbox
                           </Link>
                           <Link to="/manager/users" className="btn btn-outline-secondary btn-sm">
                             <i className="fas fa-users me-2" />
-                            Users
+                            User accounts
                           </Link>
                           <Link to="/manager/categories" className="btn btn-outline-secondary btn-sm">
                             <i className="fas fa-tags me-2" />
-                            Categories
+                            Hazard categories
                           </Link>
                           <Link to="/manager/locations" className="btn btn-outline-secondary btn-sm">
                             <i className="fas fa-map-marker-alt me-2" />
-                            Locations
+                            Manage campus
                           </Link>
                         </>
                       ) : (

@@ -197,7 +197,7 @@ export default function AdminInbox() {
                     color: "var(--text-primary)",
                   }}
                 >
-                  Admin Inbox
+                  Report inbox
                 </h2>
                 <p
                   className="mb-0"
@@ -209,7 +209,7 @@ export default function AdminInbox() {
                     fontWeight: 600,
                   }}
                 >
-                  Reviewing all submitted hazards. Preparing records...
+                  Loading reports…
                 </p>
               </div>
             </div>
@@ -223,7 +223,7 @@ export default function AdminInbox() {
                 style={{ width: "1.75rem", height: "1.75rem", color: "#0C8A3B" }}
               />
               <p className="mt-3 mb-0 text-muted" style={{ fontFamily: interFamily, fontSize: "0.9rem" }}>
-                Loading inbox reports... Please wait.
+                Loading reports…
               </p>
             </div>
           </div>
@@ -274,7 +274,7 @@ export default function AdminInbox() {
                   color: "var(--text-primary)",
                 }}
               >
-                Admin Inbox
+                Report inbox
               </h2>
               <p
                 className="mb-0"
@@ -286,7 +286,7 @@ export default function AdminInbox() {
                   fontWeight: 600,
                 }}
               >
-                All hazard reports in the system. Use filters and actions for quick triage.
+                All submitted hazard reports. Use filters to find a report.
               </p>
             </div>
 

@@ -12,7 +12,7 @@ export default function AdminHome() {
         Signed in as <b>{user?.name}</b> ({user?.email}) — role: <b>{user?.role}</b>
       </div>
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-        <Link to="/admin/inbox">Inbox</Link>
+        <Link to="/admin/inbox">Report inbox</Link>
       </div>
     </div>
   );

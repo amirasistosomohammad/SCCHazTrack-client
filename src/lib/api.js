@@ -78,6 +78,14 @@ api.interceptors.response.use(
   }
 );
 
+export function getAuthToken() {
+  try {
+    return localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
 export function setAuthToken(token) {
   if (!token) {
     localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);

@@ -42,11 +42,14 @@ export default function ManagerHome() {
         <div>Metrics unavailable.</div>
       )}
 
-      <h3>Configuration</h3>
+      <h3>Lists</h3>
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-        <Link to="/manager/users">Users</Link>
-        <Link to="/manager/categories">Categories</Link>
-        <Link to="/manager/locations">Locations</Link>
+        <Link to="/manager/categories">Hazard categories</Link>
+        <Link to="/manager/locations">Manage campus</Link>
+      </div>
+      <h3 style={{ marginTop: 16 }}>Admin tools</h3>
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+        <Link to="/manager/users">User accounts</Link>
       </div>
     </div>
   );

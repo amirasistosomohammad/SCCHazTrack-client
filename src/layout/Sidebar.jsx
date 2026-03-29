@@ -98,10 +98,21 @@ const Sidebar = ({ onCloseSidebar }) => {
     ...(isAdmin
       ? [
           {
-            heading: 'ADMINISTRATION',
+            heading: 'REPORT PROCESSING',
+            items: [{ icon: 'fas fa-inbox', label: 'Report inbox', href: '/admin/inbox' }],
+          },
+          {
+            heading: 'REFERENCE DATA',
             items: [
-              { icon: 'fas fa-inbox', label: 'Admin Inbox', href: '/admin/inbox' },
-              { icon: 'fas fa-users', label: 'Manage Users', href: '/manager/users' },
+              { icon: 'fas fa-tags', label: 'Hazard categories', href: '/manager/categories' },
+              { icon: 'fas fa-map-marker-alt', label: 'Manage campus', href: '/manager/locations' },
+            ],
+          },
+          {
+            heading: 'SYSTEM ACCESS',
+            items: [
+              { icon: 'fas fa-users', label: 'User accounts', href: '/manager/users' },
+              { icon: 'fas fa-cog', label: 'System settings', href: '/admin/settings' },
             ],
           },
         ]
